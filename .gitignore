@@ -1,0 +1,12 @@
+# Windows thumbnail cache
+Thumbs.db
+
+# Windows explorer
+Desktop.ini
+
+# Log files
+*.log
+
+# Temp files
+*.tmp
+~$*
