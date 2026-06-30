@@ -19,13 +19,42 @@
 
     "internet_check": {
         "targets": ["8.8.8.8", "google.com", "1.1.1.1"],
-        "timeout_ms": 3000,
-        "retries": 1
+        "timeout_ms": 3000
     },
 
     "app": {
         "title": "KBU Workstation Deployment Tool",
         "name": "KBU Workstation Deployment Tool",
-        "institution": "Karabuk Universitesi - Bilgi Islem Daire Baskanligi"
+        "institution": "Karabuk Universitesi - Bilgi Islem Daire Baskanligi",
+        "date_format": "dd.MM.yyyy - HH:mm:ss",
+        "background_color": "DarkBlue",
+        "foreground_color": "White"
+    },
+
+    "installers": {
+        "java": {
+            "silent_args_1": "/s REBOOT=0 SPONSORS=0 AUTO_UPDATE=0 WEB_JAVA=0 WEB_JAVA_SECURITY_LEVEL=H",
+            "silent_args_2": "INSTALL_SILENT=1 REBOOT=Suppress"
+        },
+        "envision": {
+            "silent_args_1": "/quiet /norestart",
+            "silent_args_2": "/S"
+        }
+    },
+
+    "desktop": {
+        "icons": {
+            "Bu PC": "{20D04FE0-3AEA-1069-A2D8-08002B30309D}",
+            "Denetim Masasi": "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}",
+            "Ag": "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}",
+            "Geri Donusum Kutusu": "{645FF040-5081-101B-9F08-00AA002F954E}"
+        },
+        "registry_path": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel",
+        "explorer_wait_seconds": 2
+    },
+
+    "timing": {
+        "invalid_choice_wait_seconds": 2,
+        "exit_wait_seconds": 2
     }
 }
