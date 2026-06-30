@@ -192,7 +192,7 @@ Describe "Logger functions" {
 |--------|----------|--------|
 | `Installer.ps1` | All 6 installers | Require real installer binaries and system modification |
 | `Desktop.ps1` | `Add-DesktopIcons` | Writes to live registry — mock would not validate actual behaviour |
-| `Desktop.ps1` | `Refresh-Explorer` | Kills the shell process — not viable in CI |
+| `Desktop.ps1` | `Update-ExplorerShell` | Kills the shell process — not viable in CI |
 | `Deploy.ps1` | `Invoke-OfflineInstall` | Orchestrates system-mutating installer functions |
 | `Deploy.ps1` | `Invoke-OnlineInstall` | Requires real internet and installers |
 
