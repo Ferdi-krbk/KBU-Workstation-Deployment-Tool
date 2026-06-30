@@ -259,7 +259,7 @@ All settings live in `config.json` at the project root. No values are hardcoded 
 USB_ROOT/
 │
 ├── deploy.bat               ← Launcher (double-click to start)
-├── kurulum.bat              ← Backward-compatible entry point
+├── kurulum.bat              ← Launcher (with legacy fallback hint)
 ├── config.json              ← All settings (paths, logos, args, timing)
 ├── LICENSE                  ← MIT License
 ├── README.md                ← This documentation
@@ -273,6 +273,14 @@ USB_ROOT/
 │   ├── Network.ps1          ← Multi-target internet connectivity check
 │   ├── Installer.ps1        ← AnyDesk, Akia, Java, Office, enVision, Ninite
 │   └── Desktop.ps1          ← Registry icon toggle, Explorer restart
+│
+├── legacy/                  ← Historical Batch implementation
+│   └── kurulum_legacy.bat   ← Full 722-line Batch script (v1.2.0)
+│
+├── tests/                   ← Testing documentation
+│   ├── manual-test-plan.md  ← 20 manual test cases
+│   ├── manual-test-results.md ← Completed results (100% pass)
+│   └── TESTING.md           ← Testing strategy + Pester examples
 │
 ├── screenshots/             ← UI screenshots
 │   ├── anamenu.png

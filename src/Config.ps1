@@ -6,14 +6,6 @@
 #  structured config object consumed by all other modules.
 # =============================================================================
 
-# =============================================================================
-#  Config.ps1
-#  Configuration loading and validation module.
-#  Reads config.json from USB root, validates required fields,
-#  resolves full paths, applies defaults, and returns a
-#  structured config object consumed by all other modules.
-# =============================================================================
-
 <#
 .SYNOPSIS
     Loads and validates config.json, returns a structured config object.

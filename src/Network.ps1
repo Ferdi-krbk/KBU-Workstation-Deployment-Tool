@@ -26,7 +26,12 @@
 #>
 function Test-InternetConnection {
     param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNull()]
         [string[]]$Targets,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateRange(1, 60000)]
         [int]$TimeoutMs
     )
 
