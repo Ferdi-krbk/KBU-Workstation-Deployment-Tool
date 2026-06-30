@@ -1,0 +1,31 @@
+{
+    "version": "1.2.0",
+
+    "paths": {
+        "kbu_directory": "Kbü",
+        "office_directory": "Office Cevrimdisi",
+        "anydesk": "Kbü\\AnyDesk.exe",
+        "akia": "Kbü\\Akia_windows-x64_6_7_6.exe",
+        "java": "Kbü\\jre-8u411-windows-x64.exe",
+        "envision": "Kbü\\enVision.Client.Service.exe",
+        "ninite": "Kbü\\Ninite Chrome Firefox Foxit Reader GOM Installer.exe",
+        "office": "Office Cevrimdisi\\Setup.exe"
+    },
+
+    "logging": {
+        "filename": "kurulum_log.txt",
+        "location": "desktop"
+    },
+
+    "internet_check": {
+        "targets": ["8.8.8.8", "google.com", "1.1.1.1"],
+        "timeout_ms": 3000,
+        "retries": 1
+    },
+
+    "app": {
+        "title": "KBU Workstation Deployment Tool",
+        "name": "KBU Workstation Deployment Tool",
+        "institution": "Karabuk Universitesi - Bilgi Islem Daire Baskanligi"
+    }
+}
