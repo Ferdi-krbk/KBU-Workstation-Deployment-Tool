@@ -17,9 +17,12 @@ Kbü/
 Office Cevrimdisi/
 Office Çevrimdışı/
 
-# Installer binaries
+# Installer and archive binaries
 *.exe
 *.msi
+*.iso
+*.zip
+*.rar
 
 # IDE / editor
 .vscode/
