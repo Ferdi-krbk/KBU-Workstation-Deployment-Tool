@@ -51,6 +51,21 @@ Write-InstallLog "=============================================="
 #  HELPER FUNCTIONS
 # =============================================================================
 
+<#
+.SYNOPSIS
+    Validates a single file or folder in Test Mode.
+.DESCRIPTION
+    Checks whether $Path exists and logs the result.
+    Used by Invoke-TestMode for its 9-point validation.
+.PARAMETER Path
+    Full path to the file or folder to check.
+.PARAMETER Label
+    Human-readable name for console and log messages.
+.PARAMETER Type
+    "dosya" for file checks, "klasor" for folder checks (affects error hints).
+.EXAMPLE
+    $ok = Test-CheckItem -Path "D:\Kbu\AnyDesk.exe" -Label "AnyDesk.exe" -Type "dosya"
+#>
 function Test-CheckItem {
     param([string]$Path, [string]$Label, [string]$Type)
     if (Test-Path $Path) {
@@ -72,6 +87,14 @@ function Test-CheckItem {
 # =============================================================================
 #  MAIN MENU
 # =============================================================================
+
+<#
+.SYNOPSIS
+    Renders the interactive main menu with Unicode box-drawing characters.
+.DESCRIPTION
+    Clears the screen and draws the full menu interface with app name,
+    version, institution, and four numbered options. Colours come from $Cfg.
+#>
 function Show-MainMenu {
     Clear-Host
     Write-Host ""
@@ -169,6 +192,14 @@ function Show-MainMenu {
 # =============================================================================
 #  OFFLINE INSTALLATION WORKFLOW
 # =============================================================================
+
+<#
+.SYNOPSIS
+    Executes the 6-step offline installation workflow.
+.DESCRIPTION
+    Installs AnyDesk, Akia, Java JRE, Office, configures desktop icons,
+    and refreshes Explorer. All paths and args come from $Cfg.
+#>
 function Invoke-OfflineInstall {
     Clear-Host
     Write-BoxHeader "CEVRIMDISI KURULUM BASLATILIYOR..." Green
@@ -187,7 +218,7 @@ function Invoke-OfflineInstall {
 
     Write-Host ""
     Write-Host "  [6/6] Windows Gezgini yenileniyor..."
-    Refresh-Explorer -WaitSeconds $Cfg.ExplorerWaitSec
+    Update-ExplorerShell -WaitSeconds $Cfg.ExplorerWaitSec
     Write-StatusOk "Windows Gezgini yenilendi."
     Write-InstallLog "[OK] Windows Gezgini yenilendi."
 
@@ -202,6 +233,14 @@ function Invoke-OfflineInstall {
 # =============================================================================
 #  ONLINE INSTALLATION WORKFLOW
 # =============================================================================
+
+<#
+.SYNOPSIS
+    Executes the 2-step online installation workflow.
+.DESCRIPTION
+    Checks internet connectivity first. If online, installs enVision
+    and Ninite package bundle. If offline, returns to menu with a warning.
+#>
 function Invoke-OnlineInstall {
     Clear-Host
     Write-BoxHeader "CEVRIMICI KURULUM BASLATILIYOR..." Cyan
@@ -237,6 +276,15 @@ function Invoke-OnlineInstall {
 # =============================================================================
 #  TEST MODE (DRY RUN)
 # =============================================================================
+
+<#
+.SYNOPSIS
+    Runs the 9-point Dry Run / Test Mode validation.
+.DESCRIPTION
+    Checks all USB folders, files, and internet connectivity without
+    installing or modifying anything on the system. Reports pass/fail
+    counts with a colour-coded summary box.
+#>
 function Invoke-TestMode {
     Clear-Host
     Write-Host ""
@@ -310,6 +358,15 @@ function Invoke-TestMode {
 # =============================================================================
 #  UI HELPERS (driven by $Cfg)
 # =============================================================================
+
+<#
+.SYNOPSIS
+    Draws a single-line Unicode box header with coloured text.
+.PARAMETER Text
+    The text to display inside the box.
+.PARAMETER Color
+    ConsoleColor for the text (Green, Cyan, Magenta, etc.).
+#>
 function Write-BoxHeader {
     param([string]$Text, [ConsoleColor]$Color)
     Write-Host ""
@@ -330,6 +387,14 @@ function Write-BoxHeader {
     Write-Host ""
 }
 
+<#
+.SYNOPSIS
+    Renders the Test Mode summary box with pass/fail counts.
+.PARAMETER Pass
+    Number of checks that passed.
+.PARAMETER Fail
+    Number of checks that failed.
+#>
 function Write-TestSummary {
     param([int]$Pass, [int]$Fail)
 
@@ -394,60 +459,71 @@ function Write-TestSummary {
 # =============================================================================
 if ($MyInvocation.InvocationName -ne '.') {
 do {
-    Show-MainMenu
-    $choice = Read-Host "   Seciminizi yapin (0-3)"
+    try {
+        Show-MainMenu
+        $choice = Read-Host "   Seciminizi yapin (0-3)"
 
-    switch ($choice) {
-        "0" { Invoke-TestMode }
-        "1" { Invoke-OfflineInstall }
-        "2" { Invoke-OnlineInstall }
-        "3" {
-            Clear-Host
-            Write-Host ""
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2554).ToString() -NoNewline -ForegroundColor White
-            Write-Host "══════════════════════════════════════════════════════════" -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2557).ToString() -ForegroundColor White
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
-            Write-Host "                                                          " -NoNewline
-            Write-Host ([char]0x2551).ToString() -ForegroundColor White
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
-            Write-Host "         $($Cfg.AppName)" -NoNewline -ForegroundColor White
-            Write-Host (" " * (56 - $Cfg.AppName.Length)) -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -ForegroundColor White
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
-            Write-Host "         " -NoNewline
-            Write-Host "Kapatiliyor... Gule gule!" -NoNewline -ForegroundColor Yellow
-            Write-Host "                            " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -ForegroundColor White
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
-            Write-Host "                                                          " -NoNewline
-            Write-Host ([char]0x2551).ToString() -ForegroundColor White
-            Write-Host "  " -NoNewline -ForegroundColor White
-            Write-Host ([char]0x255A).ToString() -NoNewline -ForegroundColor White
-            Write-Host "══════════════════════════════════════════════════════════" -NoNewline -ForegroundColor White
-            Write-Host ([char]0x255D).ToString() -ForegroundColor White
-            Write-Host ""
-            Write-Host "         Log dosyasi: $($Cfg.LogFile)"
-            Write-Host ""
+        switch ($choice) {
+            "0" { Invoke-TestMode }
+            "1" { Invoke-OfflineInstall }
+            "2" { Invoke-OnlineInstall }
+            "3" {
+                Clear-Host
+                Write-Host ""
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2554).ToString() -NoNewline -ForegroundColor White
+                Write-Host "══════════════════════════════════════════════════════════" -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2557).ToString() -ForegroundColor White
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
+                Write-Host "                                                          " -NoNewline
+                Write-Host ([char]0x2551).ToString() -ForegroundColor White
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
+                Write-Host "         $($Cfg.AppName)" -NoNewline -ForegroundColor White
+                Write-Host (" " * (56 - $Cfg.AppName.Length)) -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -ForegroundColor White
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
+                Write-Host "         " -NoNewline
+                Write-Host "Kapatiliyor... Gule gule!" -NoNewline -ForegroundColor Yellow
+                Write-Host "                            " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -ForegroundColor White
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x2551).ToString() -NoNewline -ForegroundColor White
+                Write-Host "                                                          " -NoNewline
+                Write-Host ([char]0x2551).ToString() -ForegroundColor White
+                Write-Host "  " -NoNewline -ForegroundColor White
+                Write-Host ([char]0x255A).ToString() -NoNewline -ForegroundColor White
+                Write-Host "══════════════════════════════════════════════════════════" -NoNewline -ForegroundColor White
+                Write-Host ([char]0x255D).ToString() -ForegroundColor White
+                Write-Host ""
+                Write-Host "         Log dosyasi: $($Cfg.LogFile)"
+                Write-Host ""
 
-            Write-InstallLog "=============================================="
-            Write-InstallLog "  $($Cfg.AppName) - Sonlandi"
-            Write-InstallLog "  Bitis: $(Get-Date -Format $Cfg.DateFormat)"
-            Write-InstallLog "=============================================="
+                Write-InstallLog "=============================================="
+                Write-InstallLog "  $($Cfg.AppName) - Sonlandi"
+                Write-InstallLog "  Bitis: $(Get-Date -Format $Cfg.DateFormat)"
+                Write-InstallLog "=============================================="
 
-            Start-Sleep -Seconds $Cfg.ExitWaitSec
-            exit 0
+                Start-Sleep -Seconds $Cfg.ExitWaitSec
+                exit 0
+            }
+            default {
+                Write-Host ""
+                Write-Host "  [!] Gecersiz secim! Lutfen 0, 1, 2 veya 3 girin." -ForegroundColor Red
+                Start-Sleep -Seconds $Cfg.InvalidWaitSec
+            }
         }
-        default {
-            Write-Host ""
-            Write-Host "  [!] Gecersiz secim! Lutfen 0, 1, 2 veya 3 girin." -ForegroundColor Red
-            Start-Sleep -Seconds $Cfg.InvalidWaitSec
-        }
+    }
+    catch {
+        Write-Host ""
+        Write-StatusError "Beklenmeyen hata: $($_.Exception.Message)"
+        Write-InstallLog "[HATA] Beklenmeyen hata: $($_.Exception.Message)"
+        Write-InstallLog "[HATA] Stack: $($_.ScriptStackTrace)"
+        Write-Host "  Lutfen log dosyasini kontrol edin: $($Cfg.LogFile)"
+        Write-Host ""
+        Start-Sleep -Seconds 4
     }
 } while ($true)
 }
