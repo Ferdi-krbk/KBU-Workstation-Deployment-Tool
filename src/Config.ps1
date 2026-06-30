@@ -6,6 +6,30 @@
 #  structured config object consumed by all other modules.
 # =============================================================================
 
+# =============================================================================
+#  Config.ps1
+#  Configuration loading and validation module.
+#  Reads config.json from USB root, validates required fields,
+#  resolves full paths, applies defaults, and returns a
+#  structured config object consumed by all other modules.
+# =============================================================================
+
+<#
+.SYNOPSIS
+    Loads and validates config.json, returns a structured config object.
+.DESCRIPTION
+    Performs three-level validation: file existence, JSON syntax, and
+    required-field presence. Applies built-in defaults for all optional
+    fields (app branding, installer args, desktop icons, timing, colours).
+    Resolves all relative installer paths to absolute paths.
+    Exits with code 1 and a clear error message on any failure.
+.PARAMETER UsbRoot
+    Root directory of the USB drive containing config.json.
+.EXAMPLE
+    $Cfg = Get-Configuration -UsbRoot "D:\"
+    $Cfg.Paths.AnyDesk  # D:\Kbu\AnyDesk.exe
+    $Cfg.AppTitle       # KBU Workstation Deployment Tool
+#>
 function Get-Configuration {
     param(
         [Parameter(Mandatory = $true)]
