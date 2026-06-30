@@ -10,3 +10,18 @@ Desktop.ini
 # Temp files
 *.tmp
 ~$*
+
+# Installer packages (large binaries)
+Kbu/
+Kbü/
+Office Cevrimdisi/
+Office Çevrimdışı/
+
+# Installer binaries
+*.exe
+*.msi
+
+# IDE / editor
+.vscode/
+*.bak
+*.orig
