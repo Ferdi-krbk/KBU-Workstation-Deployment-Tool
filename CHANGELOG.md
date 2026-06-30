@@ -10,32 +10,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- **Hybrid Batch + PowerShell architecture** — `deploy.bat` is a thin launcher; all logic in `src/` PowerShell modules
-- **Modular PowerShell engine** — six domain modules (`Config.ps1`, `Logger.ps1`, `Network.ps1`, `Installer.ps1`, `Desktop.ps1`, `Deploy.ps1`)
-- **Comprehensive `config.json`** — `installers`, `desktop`, `timing`, and `app` sections added
-- Configurable Java and enVision silent-install arguments
-- Configurable desktop icon GUIDs and registry path
-- Configurable console colours (`background_color`, `foreground_color`)
-- Configurable timestamp format (`date_format`)
-- Configurable wait durations (`invalid_choice_wait_seconds`, `exit_wait_seconds`, `explorer_wait_seconds`)
-- Admin privilege check in `deploy.bat` before launching PowerShell
-- Guard clause on main loop — `Deploy.ps1` is safe to dot-source without running
+- **Hybrid Batch + PowerShell architecture** — thin launchers (`kurulum.bat`, `deploy.bat`) delegate to PowerShell engine
+- **Modular PowerShell deployment engine** — six domain modules in `src/` (`Config.ps1`, `Logger.ps1`, `Network.ps1`, `Installer.ps1`, `Desktop.ps1`, `Deploy.ps1`)
+- **Comprehensive manual testing documentation** — `tests/manual-test-plan.md` (20 cases), `tests/manual-test-results.md` (100% pass), `tests/TESTING.md` (strategy + Pester examples)
+- **Extended `config.json`** — `installers`, `desktop`, `timing`, and `app` sections with 24 configurable fields
+- Configurable Java and enVision silent-install arguments, desktop icon GUIDs, registry path, console colours, date format, timing values
+- Admin privilege check in launchers before PowerShell launch
+- Guard clause on Deploy.ps1 main loop — safe to dot-source without running
+- Mandatory parameter validation on all 6 installer functions
+- try/catch error handling on main loop, installer fallback paths, and registry operations
 
 ### Changed
 
-- All PowerShell modules receive configuration as parameters (no hardcoded values)
-- `Network.ps1` parameter defaults removed — caller provides targets and timeout
-- `Desktop.ps1` accepts icon objects and registry path as parameters
-- `Installer.ps1` functions accept `-SilentArgs1` / `-SilentArgs2` parameters
+- **`kurulum.bat` converted into a thin launcher** — original 722-line Batch logic preserved in `legacy/kurulum_legacy.bat`
+- **Deployment logic moved into modular PowerShell scripts** — each module has a single responsibility
+- All PowerShell modules receive configuration as parameters (zero hardcoded values)
+- `Network.ps1`, `Desktop.ps1`, `Installer.ps1` functions accept config-driven parameters
 - `Config.ps1` builds default objects as variables before `Add-Member` (resolves parser ambiguity)
 - `Deploy.ps1` consolidated repetitive box-drawing into `Write-BoxHeader` and `Write-TestSummary` helpers
 - Test Mode loop replaced with declarative `$checks` array (DRY)
+- `Refresh-Explorer` renamed to `Update-ExplorerShell` (approved PowerShell verb)
+- `Test-InstallerExists` helper extracted to eliminate 6 identical file-existence guards
+- Improved `.gitignore` with binary and installer folder exclusions
 
 ### Documentation
 
-- Rewritten README with Hybrid Architecture explanation, architecture diagram, config reference table
-- Added Future Improvements section
-- Updated KEEP A CHANGELOG format
+- **README rewritten** for hybrid architecture — architecture diagram, config reference table, repo and USB folder structures, deployment workflow
+- **CHANGELOG maintained in Keep a Changelog format** across all versions
+- **Manual testing suite added** — test plan, completed results, and testing strategy
+- Added Future Improvements roadmap
 
 ---
 
