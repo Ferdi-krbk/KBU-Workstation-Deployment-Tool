@@ -28,7 +28,7 @@ All operations are logged. A Dry Run mode validates USB contents before committi
 - **Desktop Customization** — Registry-based toggle for This PC, Control Panel, Network, and Recycle Bin icons
 
 ### Engineering Quality
-- **Hybrid Batch + PowerShell Architecture** — `deploy.bat` is a thin launcher; all logic lives in modular PowerShell scripts
+- **Hybrid Batch + PowerShell Architecture** — `kurulum.bat` / `deploy.bat` are thin launchers; all logic lives in modular `src/` PowerShell scripts
 - **External Configuration** — Every path, installer argument, icon GUID, colour, and timing value lives in `config.json`
 - **Graceful Error Handling** — File existence checks before every operation, multiple silent-install fallbacks, missing config exits cleanly
 - **Comprehensive Logging** — Step-by-step log written to Desktop (`kurulum_log.txt`), configurable via `config.json`
@@ -42,20 +42,22 @@ All operations are logged. A Dry Run mode validates USB contents before committi
 The project uses a **thin-launcher pattern**:
 
 ```
-deploy.bat         →  2 %  of logic   (admin check, launch PowerShell)
-src/Deploy.ps1     →  60 % of logic   (menu orchestrator, workflow controller)
-src/Config.ps1     →  15 % of logic   (config.json loading and validation)
-src/Installer.ps1  →  10 % of logic   (6 installer functions)
-src/Desktop.ps1    →   5 % of logic   (registry icons, explorer refresh)
-src/Logger.ps1     →   4 % of logic   (file logging, coloured console)
-src/Network.ps1    →   4 % of logic   (multi-target ping verification)
+kurulum.bat         →  2 %  of logic   (admin check, launch PowerShell)
+deploy.bat          →  2 %  of logic   (alternative launcher)
+src/Deploy.ps1      →  60 % of logic   (menu orchestrator, workflow controller)
+src/Config.ps1      →  15 % of logic   (config.json loading and validation)
+src/Installer.ps1   →  10 % of logic   (6 installer functions)
+src/Desktop.ps1     →   5 % of logic   (registry icons, explorer refresh)
+src/Logger.ps1      →   4 % of logic   (file logging, coloured console)
+src/Network.ps1     →   4 % of logic   (multi-target ping verification)
 ```
 
 ### Why Hybrid?
 
 | Layer | Technology | Role |
 |-------|-----------|------|
-| `deploy.bat` | Windows Batch | Admin privilege check, code page setup, PowerShell bootstrap — the only file users interact with |
+| `kurulum.bat` | Windows Batch | Admin privilege check, code page setup, PowerShell bootstrap — primary entry point for IT staff |
+| `deploy.bat` | Windows Batch | Alternative launcher with identical behaviour — also calls `src/Deploy.ps1` |
 | `src/*.ps1` | PowerShell 5.1+ | All deployment logic, config validation, installer orchestration, logging |
 
 **Benefits over pure Batch:**
@@ -72,8 +74,9 @@ src/Network.ps1    →   4 % of logic   (multi-target ping verification)
 
 ```
                                ┌──────────────────────┐
-                               │     deploy.bat        │
-                               │  (Launcher / Admin)   │
+                               │   kurulum.bat /       │
+                               │   deploy.bat          │
+                               │  (Thin Launchers)     │
                                └──────────┬───────────┘
                                           │ powershell -File
                                           ▼
@@ -144,7 +147,7 @@ All settings live in `config.json` at the project root. No values are hardcoded 
 
 ```json
 {
-    "version": "1.2.0",
+    "version": "1.3.0",
 
     "paths": {
         "kbu_directory": "Kbü",
@@ -255,16 +258,18 @@ All settings live in `config.json` at the project root. No values are hardcoded 
 
 ## Folder Structure
 
+### Repository (Git)
+
 ```
-USB_ROOT/
+KBU-Workstation-Deployment-Tool/
 │
-├── deploy.bat               ← Launcher (double-click to start)
-├── kurulum.bat              ← Launcher (with legacy fallback hint)
-├── config.json              ← All settings (paths, logos, args, timing)
+├── kurulum.bat              ← Primary launcher (thin Batch script)
+├── deploy.bat               ← Alternative launcher
+├── config.json              ← External configuration (paths, settings, args)
+├── CHANGELOG.md             ← Release history (Keep a Changelog)
+├── README.md                ← Project documentation
 ├── LICENSE                  ← MIT License
-├── README.md                ← This documentation
-├── CHANGELOG.md             ← Release history
-├── .gitignore
+├── .gitignore               ← Excludes installer binaries and logs
 │
 ├── src/                     ← PowerShell deployment engine
 │   ├── Deploy.ps1           ← Entry point, main menu, workflow orchestrator
@@ -275,25 +280,39 @@ USB_ROOT/
 │   └── Desktop.ps1          ← Registry icon toggle, Explorer restart
 │
 ├── legacy/                  ← Historical Batch implementation
-│   └── kurulum_legacy.bat   ← Full 722-line Batch script (v1.2.0)
+│   └── kurulum_legacy.bat   ← Full Batch script preserved (v1.2.0)
 │
 ├── tests/                   ← Testing documentation
 │   ├── manual-test-plan.md  ← 20 manual test cases
 │   ├── manual-test-results.md ← Completed results (100% pass)
 │   └── TESTING.md           ← Testing strategy + Pester examples
 │
-├── screenshots/             ← UI screenshots
-│   ├── anamenu.png
-│   └── testmod.png
+└── screenshots/             ← UI screenshots
+    ├── anamenu.png
+    └── testmod.png
+```
+
+### USB Deployment Layout
+
+The repository is deployed onto a USB drive with the following layout (installer binaries are excluded from Git via `.gitignore`):
+
+```
+USB_ROOT/
 │
-├── Kbu/                     ← Installer packages
+├── kurulum.bat
+├── deploy.bat
+├── config.json
+├── src/
+│   └── (all .ps1 modules)
+│
+├── Kbu/                     ← Installer packages (gitignored)
 │   ├── AnyDesk.exe
 │   ├── Akia_windows-x64_6_7_6.exe
 │   ├── jre-8u411-windows-x64.exe
 │   ├── enVision.Client.Service.exe
 │   └── Ninite Chrome Firefox Foxit Reader GOM Installer.exe
 │
-└── Office Cevrimdisi/       ← Office offline installer
+└── Office Cevrimdisi/       ← Office offline installer (gitignored)
     └── Setup.exe
 ```
 
@@ -305,7 +324,7 @@ USB_ROOT/
 
 1. **Prepare USB** — Copy all files and installer packages to a USB drive
 2. **Plug USB** into the new Windows 10 computer
-3. **Right-click** `deploy.bat` → **Run as Administrator**
+3. **Right-click** `kurulum.bat` → **Run as Administrator**
 4. **Verify** — Press `[0]` for Test Mode to check all files are present
 5. **Deploy** — Press `[1]` for offline install or `[2]` for online install
 6. **Done** — Log file saved to Desktop
@@ -321,14 +340,14 @@ USB_ROOT/
 
 ### Administrator Privileges
 
-`deploy.bat` checks for admin rights before launching PowerShell. If missing, it displays an error and exits.
+`kurulum.bat` checks for admin rights before launching PowerShell. If missing, it displays an error and exits.
 
 ---
 
 ## Deployment Workflow
 
 ```
-User double-clicks deploy.bat
+User double-clicks kurulum.bat
            │
            ▼
    [Admin privilege check]
