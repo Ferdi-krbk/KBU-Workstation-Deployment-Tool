@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.0] — 2026-07-01
+
+### Added
+
+- **Pester testing suite** — 54 automated tests covering all 6 modules
+- **Config module tests** (19) — valid/invalid JSON, missing fields, default values, path resolution
+- **Logger module tests** (7) — file creation, message appending, console output safety
+- **Network module tests** (4) — function structure, parameter validation, mandatory attributes
+- **Installer module tests** (15) — file existence, AnyDesk copy, Java/enVision fallback chains
+- **Desktop module tests** (4) — mocked registry writes, explorer restart resilience
+- **Deploy module tests** (7) — function inventory (16 functions), dependency verification
+- Test helper `tests/TestConfig.ps1` for generating config.json payloads in temp directories
+- Testing section in README with coverage table and run instructions
+
+### Documentation
+
+- **TESTING.md rewritten** — automated test structure, mock rationale, Pester run instructions, CI/CD template
+- **README.md** updated with Testing section (coverage by module, how to run)
+- **CHANGELOG.md** updated with v1.4.0 entry
+
+---
+
 ## [1.3.0] — 2026-06-30
 
 ### Added

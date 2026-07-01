@@ -410,6 +410,35 @@ User double-clicks kurulum.bat
 
 ---
 
+## Testing
+
+The project includes a **Pester testing suite** with 54 automated tests covering all 6 modules.
+
+### Running Tests
+
+```powershell
+Import-Module Pester -Force
+Invoke-Pester -Path tests/deployment.tests.ps1
+```
+
+**Requirements:** Pester 3.x or later, PowerShell 5.1+
+
+### Coverage
+
+| Module | Tests | Approach |
+|--------|-------|----------|
+| Config.ps1 | 19 | Creates real config.json in `%TEMP%` — no mocks |
+| Logger.ps1 | 7 | Writes to `%TEMP%` log files — no mocks |
+| Network.ps1 | 4 | Validates function structure and parameters |
+| Installer.ps1 | 15 | `Start-Process` mocked to simulate success/failure |
+| Desktop.ps1 | 4 | Registry and process management mocked |
+| Deploy.ps1 | 7 | Module integration and dependency verification |
+
+Destructive operations are always mocked. Pure logic is tested against real functions.
+See `tests/TESTING.md` for the full testing strategy.
+
+---
+
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
