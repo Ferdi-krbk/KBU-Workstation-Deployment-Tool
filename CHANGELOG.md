@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- **Pester testing suite** — 54 automated tests covering all 6 modules
+- **Pester 5 testing suite** — 63 automated tests, zero failures, PS 5.1 compatible
 - **Config module tests** (19) — valid/invalid JSON, missing fields, default values, path resolution
 - **Logger module tests** (7) — file creation, message appending, console output safety
 - **Network module tests** (4) — function structure, parameter validation, mandatory attributes

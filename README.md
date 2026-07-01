@@ -412,30 +412,30 @@ User double-clicks kurulum.bat
 
 ## Testing
 
-The project includes a **Pester testing suite** with 54 automated tests covering all 6 modules.
+The project includes a **Pester 5 testing suite** with 63 automated tests covering all 6 modules.
 
 ### Running Tests
 
 ```powershell
-Import-Module Pester -Force
+Import-Module Pester -Force -RequiredVersion 5.6.0
 Invoke-Pester -Path tests/deployment.tests.ps1
 ```
 
-**Requirements:** Pester 3.x or later, PowerShell 5.1+
+**Requirements:** Pester 5.x, PowerShell 5.1+
 
 ### Coverage
 
 | Module | Tests | Approach |
 |--------|-------|----------|
-| Config.ps1 | 19 | Creates real config.json in `%TEMP%` — no mocks |
-| Logger.ps1 | 7 | Writes to `%TEMP%` log files — no mocks |
-| Network.ps1 | 4 | Validates function structure and parameters |
-| Installer.ps1 | 15 | `Start-Process` mocked to simulate success/failure |
-| Desktop.ps1 | 4 | Registry and process management mocked |
-| Deploy.ps1 | 7 | Module integration and dependency verification |
+| Config.ps1 | 29 | Real config.json in `%TEMP%`, validates all 24 fields and defaults |
+| Logger.ps1 | 6 | Temp log files, console output safety |
+| Network.ps1 | 4 | Function signature, mandatory param validation |
+| Installer.ps1 | 20 | File existence, AnyDesk copy, Java/enVision 3-stage fallback chains |
+| Desktop.ps1 | 6 | Mocked registry writes, explorer restart resilience |
+| Deploy.ps1 | 8 | 16 function inventory, mandatory parameters, dependency verification |
 
-Destructive operations are always mocked. Pure logic is tested against real functions.
-See `tests/TESTING.md` for the full testing strategy.
+**Note:** Network connectivity tests mock at function signature level due to `Test-Connection -TimeoutMilliseconds` requiring PS 6+. Destructive operations (registry, processes, installers) are always mocked.
+See `tests/TESTING.md` for full strategy.
 
 ---
 
